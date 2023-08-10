@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Recognition</h1>
+    <form id="register-form" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div>
+            <video id="kamera-stream" width="640" height="480" autoplay muted></video>
+            <canvas id="canvas" style="display: none;" width="640" height="480"></canvas>
+            <button type="button" id="uzmi-sliku">Uzmi sliku</button>
+            <button type="submit" id="submit-btn" style="display: none;">Ulaž</button>
+            <button type="button" id="refresh-btn" style="display: none;">Refresh</button>
+            <input type="hidden" id="base64_slika" name="picture">
+        </div>
+    </form>
+    <script>
+        const kameraStream = document.getElementById('kamera-stream');
+        const uzmiSlikuBtn = document.getElementById('uzmi-sliku');
+        const submitBtn = document.getElementById('submit-btn');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const base64SlikaInput = document.getElementById('base64_slika');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        let stream = null;
+
+        // Funkcija za inicijalizaciju kamere
+        function inicijalizirajKameru() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(streamObj => {
+                    stream = streamObj;
+                    kameraStream.srcObject = stream;
+                    kameraStream.play();
+                })
+                .catch(error => console.error('Greška pri pristupu kameri: ', error));
+        }
+
+        uzmiSlikuBtn.addEventListener('click', () => {
+            // Zaustavite video prije nego što snimite sliku
+            kameraStream.pause();
+
+            // Postavite širinu i visinu canvas-a kako bi odgovarao veličini videa
+            canvas.width = kameraStream.videoWidth;
+            canvas.height = kameraStream.videoHeight;
+
+            // Nacrtajte sliku iz video elementa na canvas
+            context.drawImage(kameraStream, 0, 0, canvas.width, canvas.height);
+
+            // Dohvatite podatke slike iz canvas-a u base64 formatu
+            const dataURI = canvas.toDataURL('image/jpeg');
+
+            // Postavi sliku u skriveno polje za slanje na server
+            base64SlikaInput.value = dataURI;
+
+            // Sakrij gumb "Uzmi sliku" i prikaži gumb "Refresh" i "Ulaž"
+            uzmiSlikuBtn.style.display = 'none';
+            refreshBtn.style.display = 'block';
+            submitBtn.style.display = 'block';
+        });
+
+        refreshBtn.addEventListener('click', () => {
+            // Osvježi stranicu kako bi se ponovno inicijalizirala kamera i prikazao video
+            location.reload();
+        });
+
+        // Pokrenite inicijalizaciju kamere kada je stranica učitana
+        window.onload = inicijalizirajKameru;
+    </script>
+{% endblock %}

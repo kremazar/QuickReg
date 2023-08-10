@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Recepcija</h1>
+    <div>
+        <label for="entry_date">Odaberi datum:</label>
+        <input type="date" id="entry_date" name="entry_date" value="{{ today_date }}">
+        <a href="#" id="filter-btn">Filtriraj</a>
+    </div>
+    
+
+    {% if entries %}
+        <h2>Unosi recepcije:</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Citizenship</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                {% for entry in entries %}
+                <tr>
+                  <td>{{ entry.user.name }}</td>
+                  <td>{{ entry.user.surname }}</td>
+                  <td>{{ entry.entry_date }}</td>
+                  <td>{{ entry.entry_time.strftime('%H:%M:%S') }}</td>
+                  <td>{{ entry.user.citizenship}}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <script>
+        document.getElementById('filter-btn').addEventListener('click', function () {
+            const selectedDate = document.getElementById('entry_date').value;
+            if (selectedDate) {
+                window.location.href = `/reception?date=${selectedDate}`;
+            } else {
+                window.location.href = '/reception';
+            }
+        });
+    </script>
+    
+{% endblock %}

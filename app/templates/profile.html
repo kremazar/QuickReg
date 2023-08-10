@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container rounded bg-white mt-5 mb-5">
+    <form method="POST" action="{{ url_for('profile', user_id=user.id) }}">
+        {{ Profileform.csrf_token }}
+        {{ Profileform.hidden_tag() }}
+        <div class="row">
+            <div class="col-md-3 border-right">
+                <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="300px" src="{{ base64_image }}"><span class="font-weight-bold">{{user.name}} {{user.surname}}</span></div>
+            </div>
+            <div class="col-md-5 border-right">
+                <div class="p-3 py-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="text-right">Profile Settings</h4>
+                    </div>  
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ Profileform.name.data }}">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="labels">Surname</label>
+                            <input type="text" class="form-control"  name="surname" value="{{ Profileform.surname.data }}" placeholder="surname">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="labels">Country</label>
+                            <input type="text" class="form-control" name="country" placeholder="Enter country" value="{{ Profileform.country.data }}">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="labels">Residence</label>
+                            <input type="text" class="form-control" name="residence" placeholder="enter residence" value="{{ Profileform.residence.data }}">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="labels">Date of birth</label>
+                            <input type="date" class="form-control"  name="date_of_birth" placeholder="enter date of birth" value="{{ Profileform.date_of_birth.data }}">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="labels">OIB</label>
+                            <input type="text" class="form-control" name="oib" placeholder="enter address line 2" value="{{ Profileform.oib.data }}">
+                        </div>
+                    </div>
+                    <div class="mt-5 text-center">
+                        {{ Profileform.submit }}
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="container rounded bg-white mt-5 mb-5">
+    <h2>Upload Document</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <form method="POST" action="{{ url_for('upload_documents', user_id=user.id) }}" enctype="multipart/form-data">
+                {{ form.csrf_token }}
+                {{ form.hidden_tag() }}
+  
+                <div class="form-group">
+                    <img src="{{ front_document }}" alt="Front Document" style="max-width: 500px; max-height: 500px;">
+                </div>
+                <div class="form-group">
+                    {{ form.front_document.label }}<br>
+                    {{ form.front_document }}
+                    {{ form.front_document.errors }}
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <img src="{{ back_document }}" alt="Back Document" style="max-width: 500px; max-height: 500px;">
+                {{ form.back_document.label }}<br>
+                {{ form.back_document }}
+                {{ form.back_document.errors }}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

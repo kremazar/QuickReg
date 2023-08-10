@@ -1,0 +1,35 @@
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+  }
+
+  /* Example style for navigation links */
+  nav {
+    background-color: #555;
+    color: #fff;
+    padding: 5px;
+  }
+
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    padding: 5px 10px;
+  }
+
+  nav a:hover {
+    background-color: #777;
+  }
+
+  /* Example style for main content */
+  .content {
+    padding: 20px;
+  }
+
+  /* Example style for footer */
+  footer {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+  }

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Register</h1>
+    <form id="register-form" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div>
+            <video id="kamera-stream" width="640" height="480" autoplay></video>
+            <button type="button" id="uzmi-sliku">Uzmi sliku</button>
+            <input type="hidden" id="base64_slika" name="picture">
+        </div>
+
+        <p><button type="submit" id="submit-btn">Spremi</button></p>
+    </form>
+    <script>
+        const kameraStream = document.getElementById('kamera-stream');
+        const uzmiSlikuBtn = document.getElementById('uzmi-sliku');
+        const base64SlikaInput = document.getElementById('base64_slika');
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+    
+        // Funkcija za inicijalizaciju kamere
+        function inicijalizirajKameru() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    kameraStream.srcObject = stream;
+                    kameraStream.play();
+                })
+                .catch(error => console.error('Greška pri pristupu kameri: ', error));
+        }
+    
+        uzmiSlikuBtn.addEventListener('click', () => {
+            // Pauzirajte video prije nego što snimite sliku
+            kameraStream.pause();
+    
+            // Postavite širinu i visinu canvas-a kako bi odgovarao veličini videa
+            canvas.width = kameraStream.videoWidth;
+            canvas.height = kameraStream.videoHeight;
+    
+            // Nacrtajte sliku iz video elementa na canvas
+            context.drawImage(kameraStream, 0, 0, canvas.width, canvas.height);
+    
+            // Dohvatite podatke slike iz canvas-a u base64 formatu
+            const dataURI = canvas.toDataURL('image/jpeg');
+    
+            // Postavi sliku u skriveno polje za slanje na server
+            base64SlikaInput.value = dataURI;
+    
+            // Resetirajte video nakon što je slika snimljena
+            kameraStream.play();
+        });
+    
+        // Pokrenite inicijalizaciju kamere kada je stranica učitana
+        window.onload = inicijalizirajKameru;
+    </script>
+{% endblock %}
+
