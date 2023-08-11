@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Recepcija</h1>
-    <div>
-        <label for="entry_date">Odaberi datum:</label>
-        <input type="date" id="entry_date" name="entry_date" value="{{ today_date }}">
-        <a href="#" id="filter-btn">Filtriraj</a>
+    <h1 class="text-center mb-5">Reception</h1>
+    <div class="mb-3 text-center">
+        <label for="entry_date" class="form-label text-center">Date:</label>
+        <input type="date" id="entry_date" class="text-center" name="entry_date" value="{{ today_date }}" class="form-control date-input">
+        <a href="#" id="filter-btn" class="btn btn-primary">Filter</a>
     </div>
-    
 
     {% if entries %}
-        <h2>Unosi recepcije:</h2>
-        <table>
+        <h2 class=" mb-5">Reception entry:</h2>
+        <table class="table">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Surname</th>
                     <th>Date</th>
@@ -24,13 +24,14 @@
             <tbody id="table-body">
                 {% for entry in entries %}
                 <tr>
-                  <td>{{ entry.user.name }}</td>
-                  <td>{{ entry.user.surname }}</td>
-                  <td>{{ entry.entry_date }}</td>
-                  <td>{{ entry.entry_time.strftime('%H:%M:%S') }}</td>
-                  <td>{{ entry.user.citizenship}}</td>
+                    <td><a href="{{ url_for('profile', user_id=entry.user.id) }}" style="text-decoration: none;">{{ entry.user.id }}</a></td>
+                    <td>{{ entry.user.name }}</td>
+                    <td>{{ entry.user.surname }}</td>
+                    <td>{{ entry.entry_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ entry.entry_time.strftime('%H:%M:%S') }}</td>
+                    <td>{{ entry.user.citizenship}}</td>
                 </tr>
-              {% endfor %}
+                {% endfor %}
             </tbody>
         </table>
     {% endif %}
@@ -45,5 +46,9 @@
             }
         });
     </script>
-    
+    <style>
+        .date-input {
+            width: 200px; /* Adjust the width as needed */
+        }
+    </style>
 {% endblock %}

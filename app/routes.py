@@ -114,7 +114,11 @@ def register():
 
 @app.route('/')
 def index():
-    return redirect('/recognition')
+    return redirect('/welcome')
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return redirect(url_for('welcome'))
 
 @app.route('/recognition', methods=['GET', 'POST'])
 def recognition():
@@ -291,10 +295,10 @@ def reception():
 
     return render_template('reception.html', entries=entries, today_date=today_date)
 
-@app.route('/logout')
+""" @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('index')) """
 
 @app.route('/welcome')
 def welcome():

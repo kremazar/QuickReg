@@ -1,17 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Recognition</h1>
+    <h1 class="text-center mb-5">Recognition</h1>
     <form id="register-form" method="post" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
-        <div>
+        <div style="text-align: center;">
             <video id="kamera-stream" width="640" height="480" autoplay muted></video>
             <canvas id="canvas" style="display: none;" width="640" height="480"></canvas>
-            <button type="button" id="uzmi-sliku">Uzmi sliku</button>
-            <button type="submit" id="submit-btn" style="display: none;">Ulaž</button>
-            <button type="button" id="refresh-btn" style="display: none;">Refresh</button>
+            <br>
+            <button type="button" id="uzmi-sliku" class="btn btn-primary btn-lg mt-4">Recognize</button>
+            <br>
+            <div style="display: flex; justify-content: center; margin-top: 10px;">
+                <button type="submit" id="submit-btn" style="display: none; margin-right: 10px;" class="btn btn-primary btn-lg" >Ulaz</button>
+                <button type="button" id="refresh-btn" style="display: none;" class="btn btn-primary btn-lg">Refresh</button>
+            </div>
             <input type="hidden" id="base64_slika" name="picture">
         </div>
+        
+        
+        
     </form>
     <script>
         const kameraStream = document.getElementById('kamera-stream');

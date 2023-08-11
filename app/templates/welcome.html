@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4 text-center">Welcome to QuickReg!</h1>
+    <p class="lead text-center">QuickReg is a simple application for registration and tracking guest entry using face recognition </p>
+    <hr class="my-4">
+    <p class="lead text-center">
+      <a class="btn btn-primary btn-lg" href="{{ url_for('recognition') }}" role="button">Recognition</a>
+      <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}" role="button">Register</a>
+      <a class="btn btn-primary btn-lg" href="{{ url_for('reception') }}" role="button">Reception</a>
+    </p>
+  </div>
+{% endblock %}
