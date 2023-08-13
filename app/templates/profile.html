@@ -37,10 +37,10 @@
                         </div>
                         <div class="col-md-12">
                             <label class="labels">OIB</label>
-                            <input type="text" class="form-control" name="oib" placeholder="enter address line 2" value="{{ Profileform.oib.data }}">
+                            <input type="text" class="form-control" name="oib" placeholder="enter OIB" value="{{ Profileform.oib.data }}">
                         </div>
                     </div>
-                    <div class="mt-5 text-center">
+                    <div class="mt-5 text-center btn btn-primary">
                         {{ Profileform.submit }}
                     </div>
                     
@@ -62,23 +62,22 @@
                     <img src="{{ front_document }}" alt="Front Document" style="max-width: 500px; max-height: 500px;">
                 </div>
                 <div class="form-group">
-                    {{ form.front_document.label }}<br>
                     {{ form.front_document }}
                     {{ form.front_document.errors }}
                 </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">Upload</button>
                 </div>
-            </form>
+ 
         </div>
         <div class="col-md-6">
             <div class="form-group">
                 <img src="{{ back_document }}" alt="Back Document" style="max-width: 500px; max-height: 500px;">
-                {{ form.back_document.label }}<br>
                 {{ form.back_document }}
                 {{ form.back_document.errors }}
             </div>
         </div>
+    </form>
     </div>
 </div>
 

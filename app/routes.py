@@ -184,6 +184,8 @@ def upload_documents(user_id):
     back_document_blob = user.back_document
 
 
+    
+
     if front_document_blob:
         image_front = Image.open(io.BytesIO(front_document_blob))
         image_cv2 = cv2.cvtColor(np.array(image_front), cv2.COLOR_RGB2BGR)
@@ -195,14 +197,41 @@ def upload_documents(user_id):
         lines = text.groupby('block_num')['text'].apply(list)
         conf = text.groupby(['block_num'])['conf'].mean()
 
-        user.name = lines.iloc[12][0]
-        user.surname = lines.iloc[14][0]
-        user.sex = lines.iloc[14][2]
-        user.identity_card_numbe= lines.iloc[5][0]
-        input_string = lines.iloc[15][1]
-        cleaned_string = input_string.translate(str.maketrans('', '', '©.'))
-        user.date_of_birth = datetime.strptime(cleaned_string, '%d%m%Y').date()
-        user.country = lines.iloc[8][2]
+        
+        """ for i in range(len(lines)):
+            print("level prednja:", i, ": ", lines.iloc[i]) """
+        
+        if len(lines) > 14:
+            user.name = lines.iloc[14][0]
+        else:
+            user.name = ""
+
+        if len(lines) > 12:
+            user.surname = lines.iloc[12][0]
+        else:
+            user.surname = ""
+
+        if len(lines) > 14:
+            user.sex = lines.iloc[14][2]
+        else:
+            user.sex = ""
+
+        if len(lines) > 5:
+            user.identity_card_number = lines.iloc[5][0]
+        else:
+            user.identity_card_number = ""
+
+        if len(lines) > 15:
+            input_string = lines.iloc[15][1]
+            cleaned_string = input_string.translate(str.maketrans('', '', '©.'))
+            user.date_of_birth = datetime.strptime(cleaned_string, '%d%m%Y').date() if len(cleaned_string) == 8 else None
+        else:
+            user.date_of_birth = None
+
+        if len(lines) > 8:
+            user.country = lines.iloc[8][2]
+        else:
+            user.country = ""
 
 
     if back_document_blob:
@@ -216,11 +245,19 @@ def upload_documents(user_id):
         lines_back = text_back.groupby('block_num')['text'].apply(list)
         conf_back = text_back.groupby(['block_num'])['conf'].mean()
 
-        user.residence = lines_back.iloc[0][1] 
-        user.oib = lines_back.iloc[6][0]
+        if len(lines_back) > 0:
+            user.residence = lines_back.iloc[0][1] if len(lines_back.iloc[0]) > 1 else ""
+        else:
+            user.residence = ""
+
+        if len(lines_back) > 6:
+            user.oib = lines_back.iloc[6][0] if len(lines_back.iloc[6]) > 0 else ""
+        else:
+            user.oib = ""
+
         db.session.commit()
         """ for i in range(len(lines_back)):
-            print("level", i, ": ", lines_back.iloc[i]) """
+            print("level stražnja:", i, ": ", lines_back.iloc[i]) """
 
     if form.validate_on_submit():
         front_document_file = form.front_document.data

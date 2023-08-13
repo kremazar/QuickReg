@@ -2,15 +2,24 @@
 
 {% block content %}
     <h1>Register</h1>
-    <form id="register-form" method="post" enctype="multipart/form-data">
+    <form id="register-form" method="post" enctype="multipart/form-data" class="text-center">
         {{ form.hidden_tag() }}
         <div>
             <video id="kamera-stream" width="640" height="480" autoplay></video>
-            <button type="button" id="uzmi-sliku">Uzmi sliku</button>
+            <br>
+            <button type="button" id="uzmi-sliku" class="btn btn-primary btn-lg mt-4">Take picture</button>
+            <br>
             <input type="hidden" id="base64_slika" name="picture">
         </div>
 
-        <p><button type="submit" id="submit-btn">Spremi</button></p>
+        <div id="slika-container" class="text-center" style="display: none;">
+            <p><button type="button" id="refresh-btn" class="btn btn-success btn-lg mt-4 mx-auto">Refresh</button></p>
+            <img id="snapshot" width="640" height="480">
+        </div>
+        
+        
+
+        <p><button type="submit" id="submit-btn" class="btn btn-primary btn-lg mt-4">Register</button></p>
     </form>
     <script>
         const kameraStream = document.getElementById('kamera-stream');
@@ -18,8 +27,10 @@
         const base64SlikaInput = document.getElementById('base64_slika');
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
+        const slikaContainer = document.getElementById('slika-container');
+        const snapshotImg = document.getElementById('snapshot');
+        const refreshBtn = document.getElementById('refresh-btn');
     
-        // Funkcija za inicijalizaciju kamere
         function inicijalizirajKameru() {
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(stream => {
@@ -30,28 +41,29 @@
         }
     
         uzmiSlikuBtn.addEventListener('click', () => {
-            // Pauzirajte video prije nego što snimite sliku
             kameraStream.pause();
     
-            // Postavite širinu i visinu canvas-a kako bi odgovarao veličini videa
             canvas.width = kameraStream.videoWidth;
             canvas.height = kameraStream.videoHeight;
     
-            // Nacrtajte sliku iz video elementa na canvas
             context.drawImage(kameraStream, 0, 0, canvas.width, canvas.height);
     
-            // Dohvatite podatke slike iz canvas-a u base64 formatu
             const dataURI = canvas.toDataURL('image/jpeg');
     
-            // Postavi sliku u skriveno polje za slanje na server
             base64SlikaInput.value = dataURI;
     
-            // Resetirajte video nakon što je slika snimljena
-            kameraStream.play();
+            uzmiSlikuBtn.style.display = 'none';
+            refreshBtn.style.display = 'block';
+            snapshotImg.src = dataURI;
+            slikaContainer.style.display = 'block';
+            kameraStream.style.display = 'none';
         });
     
-        // Pokrenite inicijalizaciju kamere kada je stranica učitana
+        refreshBtn.addEventListener('click', () => {
+            // Refresh the page
+            window.location.reload();
+        });
+    
         window.onload = inicijalizirajKameru;
     </script>
 {% endblock %}
-
