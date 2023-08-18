@@ -180,85 +180,6 @@ def upload_documents(user_id):
     if user is None:
         return redirect(url_for('index'))
 
-    front_document_blob = user.front_document
-    back_document_blob = user.back_document
-
-
-    
-
-    if front_document_blob:
-        image_front = Image.open(io.BytesIO(front_document_blob))
-        image_cv2 = cv2.cvtColor(np.array(image_front), cv2.COLOR_RGB2BGR)
-        gray = cv2.cvtColor(image_cv2, cv2.COLOR_BGR2GRAY)
-        th, threshed = cv2.threshold(gray, 127, 255, cv2.THRESH_TRUNC)
-        text1 = pytesseract.image_to_data(threshed, output_type='data.frame')
-        text2 = pytesseract.image_to_string(threshed, lang="hrv")
-        text = text1[text1.conf != -1]
-        lines = text.groupby('block_num')['text'].apply(list)
-        conf = text.groupby(['block_num'])['conf'].mean()
-
-        
-        """ for i in range(len(lines)):
-            print("level prednja:", i, ": ", lines.iloc[i]) """
-        
-        if len(lines) > 14:
-            user.name = lines.iloc[14][0]
-        else:
-            user.name = ""
-
-        if len(lines) > 12:
-            user.surname = lines.iloc[12][0]
-        else:
-            user.surname = ""
-
-        if len(lines) > 14:
-            user.sex = lines.iloc[14][2]
-        else:
-            user.sex = ""
-
-        if len(lines) > 5:
-            user.identity_card_number = lines.iloc[5][0]
-        else:
-            user.identity_card_number = ""
-
-        if len(lines) > 15:
-            input_string = lines.iloc[15][1]
-            cleaned_string = input_string.translate(str.maketrans('', '', '©.'))
-            user.date_of_birth = datetime.strptime(cleaned_string, '%d%m%Y').date() if len(cleaned_string) == 8 else None
-        else:
-            user.date_of_birth = None
-
-        if len(lines) > 8:
-            user.country = lines.iloc[8][2]
-        else:
-            user.country = ""
-
-
-    if back_document_blob:
-        image_back = Image.open(io.BytesIO(back_document_blob))
-        image_cv2_back = cv2.cvtColor(np.array(image_back), cv2.COLOR_RGB2BGR)
-        gray_back = cv2.cvtColor(image_cv2_back, cv2.COLOR_BGR2GRAY)
-        th_back, threshed_back = cv2.threshold(gray_back, 127, 255, cv2.THRESH_TRUNC)
-        text1_back = pytesseract.image_to_data(threshed_back, output_type='data.frame')
-        text2_back = pytesseract.image_to_string(threshed_back, lang="hrv")
-        text_back = text1_back[text1_back.conf != -1]
-        lines_back = text_back.groupby('block_num')['text'].apply(list)
-        conf_back = text_back.groupby(['block_num'])['conf'].mean()
-
-        if len(lines_back) > 0:
-            user.residence = lines_back.iloc[0][1] if len(lines_back.iloc[0]) > 1 else ""
-        else:
-            user.residence = ""
-
-        if len(lines_back) > 6:
-            user.oib = lines_back.iloc[6][0] if len(lines_back.iloc[6]) > 0 else ""
-        else:
-            user.oib = ""
-
-        db.session.commit()
-        """ for i in range(len(lines_back)):
-            print("level stražnja:", i, ": ", lines_back.iloc[i]) """
-
     if form.validate_on_submit():
         front_document_file = form.front_document.data
         back_document_file = form.back_document.data
@@ -272,8 +193,53 @@ def upload_documents(user_id):
             back_document_data = back_document_file.read()
             user.back_document = back_document_data   
         db.session.commit()
-
         flash('Images uploaded and saved successfully!')
+
+    front_document_blob = user.front_document
+    back_document_blob = user.back_document
+
+
+    image_front = Image.open(io.BytesIO(front_document_blob))
+    image_cv2 = cv2.cvtColor(np.array(image_front), cv2.COLOR_RGB2BGR)
+    gray = cv2.cvtColor(image_cv2, cv2.COLOR_BGR2GRAY)
+    th, threshed = cv2.threshold(gray, 127, 255, cv2.THRESH_TRUNC)
+    text1 = pytesseract.image_to_data(threshed, output_type='data.frame')
+    text2 = pytesseract.image_to_string(threshed, lang="hrv")
+    text = text1[text1.conf != -1]
+    lines = text.groupby('block_num')['text'].apply(list)
+    conf = text.groupby(['block_num'])['conf'].mean()
+
+        
+    for i in range(len(lines)):
+            print("level prednja:", i, ": ", lines.iloc[i])
+        
+    user.name = lines.iloc[14][0]
+    user.surname = lines.iloc[12][0]
+    user.sex = lines.iloc[14][3]
+    user.identity_card_number = lines.iloc[5][0]
+    input_string = lines.iloc[15][1]
+    cleaned_string = input_string.translate(str.maketrans('', '', '©.'))
+    user.date_of_birth = datetime.strptime(cleaned_string, '%d%m%Y').date() if len(cleaned_string) == 8 else None
+    user.country = lines.iloc[8][2]
+
+
+    image_back = Image.open(io.BytesIO(back_document_blob))
+    image_cv2_back = cv2.cvtColor(np.array(image_back), cv2.COLOR_RGB2BGR)
+    gray_back = cv2.cvtColor(image_cv2_back, cv2.COLOR_BGR2GRAY)
+    th_back, threshed_back = cv2.threshold(gray_back, 127, 255, cv2.THRESH_TRUNC)
+    text1_back = pytesseract.image_to_data(threshed_back, output_type='data.frame')
+    text2_back = pytesseract.image_to_string(threshed_back, lang="hrv")
+    text_back = text1_back[text1_back.conf != -1]
+    lines_back = text_back.groupby('block_num')['text'].apply(list)
+    conf_back = text_back.groupby(['block_num'])['conf'].mean()
+    residence2 = lines_back.iloc[0][2]
+    user.residence = lines_back.iloc[0][1] + " " + residence2
+    user.oib = lines_back.iloc[6][0] 
+
+
+    db.session.commit()
+    for i in range(len(lines_back)):
+        print("level stražnja:", i, ": ", lines_back.iloc[i])
 
         return redirect(url_for('profile', user_id=user.id))
 
@@ -292,6 +258,7 @@ def profile(user_id):
             base64_data = base64.b64encode(image_data).decode('utf-8')
             return f"data:image/jpeg;base64,{base64_data}"
         return None
+    
     if request.method == 'GET':
         Profileform.surname.data = user.surname
         Profileform.name.data = user.name
