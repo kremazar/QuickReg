@@ -212,14 +212,37 @@ def upload_documents(user_id):
     for i in range(len(lines)):
             print("level prednja:", i, ": ", lines.iloc[i])
         
-    user.name = lines.iloc[14][0]
-    user.surname = lines.iloc[12][0]
-    user.sex = lines.iloc[14][3]
-    user.identity_card_number = lines.iloc[5][0]
-    input_string = lines.iloc[15][1]
-    cleaned_string = input_string.translate(str.maketrans('', '', '©.'))
-    user.date_of_birth = datetime.strptime(cleaned_string, '%d%m%Y').date() if len(cleaned_string) == 8 else None
-    user.country = lines.iloc[8][2]
+    try:
+        user.name = lines.iloc[14][0]
+    except IndexError:
+        user.name = ""
+
+    try:
+        user.surname = lines.iloc[12][0]
+    except IndexError:
+        user.surname = ""
+
+    try:
+        user.sex = lines.iloc[14][3]
+    except IndexError:
+        user.sex = ""
+
+    try:
+        user.identity_card_number = lines.iloc[5][0]
+    except IndexError:
+        user.identity_card_number = ""
+
+    try:
+        input_string = lines.iloc[15][1]
+        cleaned_string = input_string.translate(str.maketrans('', '', '©.'))
+        user.date_of_birth = datetime.strptime(cleaned_string, '%d%m%Y').date() if len(cleaned_string) == 8 else None
+    except IndexError:
+        user.date_of_birth = None
+
+    try:
+        user.country = lines.iloc[8][2]
+    except IndexError:
+        user.country = ""
 
 
     image_back = Image.open(io.BytesIO(back_document_blob))
@@ -231,9 +254,16 @@ def upload_documents(user_id):
     text_back = text1_back[text1_back.conf != -1]
     lines_back = text_back.groupby('block_num')['text'].apply(list)
     conf_back = text_back.groupby(['block_num'])['conf'].mean()
-    residence2 = lines_back.iloc[0][2]
-    user.residence = lines_back.iloc[0][1] + " " + residence2
-    user.oib = lines_back.iloc[6][0] 
+
+    try:
+        residence2 = lines_back.iloc[0][2]
+        user.residence = lines_back.iloc[0][1] + " " + residence2
+    except IndexError:
+        user.residence = ""
+    try:
+        user.oib = lines_back.iloc[6][0]
+    except IndexError:
+        user.oib = ""
 
 
     db.session.commit()
