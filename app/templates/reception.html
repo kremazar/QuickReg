@@ -18,7 +18,7 @@
                     <th>Surname</th>
                     <th>Date</th>
                     <th>Time</th>
-                    <th>Citizenship</th>
+                    <th>Country</th>
                 </tr>
             </thead>
             <tbody id="table-body">
@@ -29,7 +29,7 @@
                     <td>{{ entry.user.surname }}</td>
                     <td>{{ entry.entry_date.strftime('%Y-%m-%d') }}</td>
                     <td>{{ entry.entry_time.strftime('%H:%M:%S') }}</td>
-                    <td>{{ entry.user.citizenship}}</td>
+                    <td>{{ entry.user.country}}</td>
                 </tr>
                 {% endfor %}
             </tbody>

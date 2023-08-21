@@ -255,6 +255,9 @@ def upload_documents(user_id):
     lines_back = text_back.groupby('block_num')['text'].apply(list)
     conf_back = text_back.groupby(['block_num'])['conf'].mean()
 
+    for i in range(len(lines_back)):
+        print("level stražnja:", i, ": ", lines_back.iloc[i])
+        
     try:
         residence2 = lines_back.iloc[0][2]
         user.residence = lines_back.iloc[0][1] + " " + residence2
@@ -267,10 +270,9 @@ def upload_documents(user_id):
 
 
     db.session.commit()
-    for i in range(len(lines_back)):
-        print("level stražnja:", i, ": ", lines_back.iloc[i])
 
-        return redirect(url_for('profile', user_id=user.id))
+
+    return redirect(url_for('profile', user_id=user.id))
 
 
 @app.route('/profile/<int:user_id>', methods=['GET', 'POST'])
